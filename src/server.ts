@@ -1,6 +1,6 @@
 import express from "express";
 
-const rezepte = [
+const recipes = [
   { id: 1, title: "Spaghetti Carbonara", description: "Leckeres italienisches Nudelgericht", category: "Hauptgericht", time_in_minutes: 20, portions: 2, difficulty: "mittel", ingredients: ["Spaghetti", "Eier", "Speck", "Parmesan", "Pfeffer"], instructions: ["Spaghetti kochen", "Speck anbraten", "Eier und Parmesan verquirlen", "Alles zusammenmischen"] },
   { id: 2, title: "Schokoladenkuchen", description: "Saftiger Schokoladenkuchen", category: "Dessert", time_in_minutes: 45, portions: 8, difficulty: "einfach", ingredients: ["Mehl", "Zucker", "Kakaopulver", "Eier", "Butter"], instructions: ["Ofen vorheizen", "Teig zubereiten", "In Form füllen", "Backen"] },
   { id: 3, title: "Caesar Salad", description: "Frischer Salat mit Caesar-Dressing", category: "Vorspeise", time_in_minutes: 15, portions: 2, difficulty: "einfach", ingredients: ["Römersalat", "Hähnchenbrust", "Croutons", "Parmesan", "Caesar-Dressing"], instructions: ["Salat waschen und schneiden", "Hähnchenbrust anbraten", "Alles zusammenmischen", "Mit Dressing servieren"] },
@@ -27,6 +27,20 @@ app.get("/", (_, res) => {
 // Health-Check: läuft der Server?
 app.get("/health", (_, res) => {
   res.json({ status: "ok" });
+});
+
+app.get("/recipes", (_, res) => {
+  res.json(recipes);
+});
+
+app.get("/recipe/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const recipe = recipes.find((r) => r.id === id);
+
+  if (!recipe) {
+    res.status(404).json({ error: "Rezept nicht gefunden" });
+  }
+  res.json(recipe);
 });
 
 app.listen(PORT, () => {
