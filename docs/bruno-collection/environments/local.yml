@@ -1,0 +1,5 @@
+name: local
+variables:
+  - name: BASEURL
+    value: http://localhost:3000
+    description: ""

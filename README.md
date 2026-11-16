@@ -2,6 +2,8 @@
 
 ### Routes
 
+_Bruno Collection is located in /docs/bruno-collection_
+
 /
 
 /health
