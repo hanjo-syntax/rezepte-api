@@ -30,7 +30,25 @@ app.get("/health", (_, res) => {
 });
 
 app.get("/recipes", (_, res) => {
-  res.json(recipes);
+  const { category, difficulty, max_time } = _.query;
+
+  let filteredRecipes = recipes;
+
+  if (category) {
+    filteredRecipes = filteredRecipes.filter((r) => r.category.toLowerCase() === (category as string).toLowerCase());
+  }
+
+  if (difficulty) {
+    filteredRecipes = filteredRecipes.filter((r) => r.difficulty.toLowerCase() === (difficulty as string).toLowerCase());
+  }
+
+  if (max_time) {
+    const maxTimeNum = Number(max_time);
+    if (!isNaN(maxTimeNum)) {
+      filteredRecipes = filteredRecipes.filter((r) => r.time_in_minutes <= maxTimeNum);
+    }
+  } 
+  res.json(filteredRecipes);
 });
 
 app.get("/recipe/:id", (req, res) => {

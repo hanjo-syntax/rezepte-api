@@ -5,7 +5,17 @@ info:
 
 http:
   method: GET
-  url: "{{BASEURL}}/recipes"
+  url: "{{BASEURL}}/recipes?category=Vorspeise&difficulty=einfach&max_time=30"
+  params:
+    - name: category
+      value: Vorspeise
+      type: query
+    - name: difficulty
+      value: einfach
+      type: query
+    - name: max_time
+      value: "30"
+      type: query
   auth: inherit
 
 settings:
@@ -14,3 +24,5 @@ settings:
   followRedirects: true
   maxRedirects: 5
   forwardAuthorizationHeader: false
+
+docs: Shows every recipe

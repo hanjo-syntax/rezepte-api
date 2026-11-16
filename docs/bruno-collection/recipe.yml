@@ -10,6 +10,7 @@ http:
     - name: id
       value: "5"
       type: path
+      description: Recipe ID
   auth: inherit
 
 settings:
