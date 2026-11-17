@@ -34,11 +34,11 @@ export async function getAllRecipes(category?: string, difficulty?: string, maxT
     let filteredRecipes = recipes;
 
     if (category) {
-        filteredRecipes = filteredRecipes.filter((r) => r.category === category);
+        filteredRecipes = filteredRecipes.filter((r) => r.category.toLowerCase() === category.toLowerCase());
     }
 
     if (difficulty) {
-        filteredRecipes = filteredRecipes.filter((r) => r.difficulty === difficulty);
+        filteredRecipes = filteredRecipes.filter((r) => r.difficulty.toLowerCase() === difficulty.toLowerCase());
     }
 
     if (maxTime !== undefined) {

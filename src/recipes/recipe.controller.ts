@@ -4,7 +4,12 @@ import { getAllRecipes, getRecipeById } from "./recipe.service";
 
 export async function getRecipesHandler(req: Request, res: Response, next: NextFunction) {
   try {
-    const rezepte = await getAllRecipes();
+    const category = typeof req.query.category === "string" ? req.query.category : undefined;
+    const difficulty = typeof req.query.difficulty === "string" ? req.query.difficulty : undefined;
+    const maxTimeValue = typeof req.query.max_time === "string" ? Number(req.query.max_time) : undefined;
+    const maxTime = maxTimeValue !== undefined && Number.isFinite(maxTimeValue) ? maxTimeValue : undefined;
+
+    const rezepte = await getAllRecipes(category, difficulty, maxTime);
     res.json(rezepte);
   } catch (err) {
     next(err);
