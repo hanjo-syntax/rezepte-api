@@ -16,7 +16,8 @@ const recipes = [
 
 const app = express();
 app.use(express.json());        // erlaubt dem Server, JSON im Request-Body zu lesen
-
+// Host und Port aus Umgebungsvariablen oder Standardwerten
+const HOST = process.env.HOST || "localhost";
 const PORT = 3000;
 
 // Begrüßung auf der Startseite
@@ -33,7 +34,9 @@ app.get("/recipes", (_, res) => {
   const { category, difficulty, max_time } = _.query;
 
   let filteredRecipes = recipes;
-
+  // Filtere nach Kategorie, Schwierigkeit und maximaler Zubereitungszeit, falls angegeben
+  // Die Reienfolge der Filterung ist relevant, da die Filterung auf dem Ergebnis des vorherigen Filters basiert
+  // Darum wird zuerst nach Kategorie, dann nach Schwierigkeit und zuletzt nach maximaler Zubereitungszeit gefiltert
   if (category) {
     filteredRecipes = filteredRecipes.filter((r) => r.category.toLowerCase() === (category as string).toLowerCase());
   }
