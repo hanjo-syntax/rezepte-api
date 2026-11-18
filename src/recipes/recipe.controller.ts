@@ -1,6 +1,6 @@
 // Recipe Controller
 import { Request, Response, NextFunction } from "express";
-import { getAllRecipes, getRecipeById } from "./recipe.service";
+import { getAllRecipes, getRecipeById, createRecipe, deleteRecipe } from "./recipe.service";
 
 export async function getRecipesHandler(req: Request, res: Response, next: NextFunction) {
   try {
@@ -29,6 +29,43 @@ export async function getRecipeHandler(req: Request, res: Response, next: NextFu
       return;
     }
     res.json(recipe);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function createRecipeHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const newRecipe = await createRecipe(req.body);
+    res.status(201).json(newRecipe);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function deleteRecipeHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const id = Number(req.params.id);
+    const deleted = await deleteRecipe(id);
+    if (!deleted) {
+      res.status(404).json({ error: "Rezept nicht gefunden" });
+      return;
+    }
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function updateRecipeHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const id = Number(req.params.id);
+    const updatedRecipe = await updateRecipe(id, req.body);
+    if (!updatedRecipe) {
+      res.status(404).json({ error: "Rezept nicht gefunden" });
+      return;
+    }
+    res.json(updatedRecipe);
   } catch (err) {
     next(err);
   }
