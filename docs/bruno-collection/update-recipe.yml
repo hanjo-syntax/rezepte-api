@@ -1,0 +1,37 @@
+info:
+  name: Update recipe
+  type: http
+  seq: 7
+
+http:
+  method: PUT
+  url: "{{BASEURL}}/recipes/:id"
+  params:
+    - name: id
+      value: "1"
+      type: path
+      description: Recipe ID
+  headers:
+    - name: x-api-key
+      value: "{{API_KEY}}"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Spaghetti Carbonara",
+        "description": "Italienisches Nudelgericht",
+        "category": "Hauptgericht",
+        "time_in_minutes": 25,
+        "portions": 2,
+        "difficulty": "mittel",
+        "ingredients": ["Spaghetti", "Eier", "Speck", "Parmesan", "Pfeffer"],
+        "instructions": ["Spaghetti kochen", "Speck anbraten", "Eier und Parmesan verquirlen", "Alles zusammenmischen"]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

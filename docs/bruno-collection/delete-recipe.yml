@@ -1,0 +1,24 @@
+info:
+  name: Delete recipe
+  type: http
+  seq: 8
+
+http:
+  method: DELETE
+  url: "{{BASEURL}}/recipes/:id"
+  params:
+    - name: id
+      value: "1"
+      type: path
+      description: Recipe ID
+  headers:
+    - name: x-api-key
+      value: "{{API_KEY}}"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

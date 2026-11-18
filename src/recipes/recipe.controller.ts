@@ -1,6 +1,6 @@
 // Recipe Controller
 import { Request, Response, NextFunction } from "express";
-import { getAllRecipes, getRecipeById, createRecipe, deleteRecipe } from "./recipe.service";
+import { getAllRecipes, getRecipeById, createRecipe, deleteRecipe, updateRecipe } from "./recipe.service";
 
 export async function getRecipesHandler(req: Request, res: Response, next: NextFunction) {
   try {

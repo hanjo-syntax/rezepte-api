@@ -3,3 +3,6 @@ variables:
   - name: BASEURL
     value: http://localhost:3000
     description: ""
+  - name: API_KEY
+    value: geheim123
+    description: Local API key required for recipe write operations
