@@ -54,3 +54,18 @@ export async function getRecipeById(id: number): Promise<Recipe | null> {
   return recipe ?? null;
 
 }
+
+let nextId = 3;
+
+export async function createRecipe(data: Omit<Recipe, "id">): Promise<Recipe> {
+  const newRecipe: Recipe = { id: nextId++, ...data };
+  recipes.push(newRecipe);
+  return newRecipe;
+}
+
+export async function deleteRecipe(id: number): Promise<boolean> {
+    const countBefore = recipes.length;
+    recipes = recipes.filter((r) => r.id !== id);
+    const countAfter = recipes.length;
+    return countAfter < countBefore;
+}
