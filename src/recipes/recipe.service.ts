@@ -69,3 +69,16 @@ export async function deleteRecipe(id: number): Promise<boolean> {
     const countAfter = recipes.length;
     return countAfter < countBefore;
 }
+
+// Usage of Partial<Omit<Recipe, "id">> to allow updating only specific fields of a recipe
+// The "id" field is omitted because it should not be updated
+// The function returns the updated recipe or null if the recipe with the given ID does not exist
+export async function updateRecipe(id: number, data: Partial<Omit<Recipe, "id">>): Promise<Recipe | null> {
+    const recipeIndex = recipes.findIndex((r) => r.id === id);
+    if (recipeIndex === -1) {
+        return null;
+    }
+    const updatedRecipe = { ...recipes[recipeIndex], ...data };
+    recipes[recipeIndex] = updatedRecipe;
+    return updatedRecipe;
+}
