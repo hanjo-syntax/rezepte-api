@@ -5,8 +5,8 @@ import { getRecipesHandler, getRecipeHandler, createRecipeHandler, deleteRecipeH
 const router = Router();
 router.get("/", getRecipesHandler);
 router.get("/:id", getRecipeHandler);
-router.post("/", createRecipeHandler);
-router.delete("/:id", deleteRecipeHandler);
-router.put("/:id", updateRecipeHandler);
+router.post("/", requireApiKey, createRecipeHandler);
+router.delete("/:id", requireApiKey, deleteRecipeHandler);
+router.put("/:id", requireApiKey, updateRecipeHandler);
 
 export default router;
