@@ -1,4 +1,5 @@
 // Recipe Service
+import { RecipeNotFoundError, ValidationError } from "./recipes.errors";
 
 // Datentyp für Rezepte definieren
 export type Recipe = {
@@ -49,15 +50,22 @@ export async function getAllRecipes(category?: string, difficulty?: string, maxT
 }
 
 // Ein Rezept anhand seiner ID zurückgeben
-export async function getRecipeById(id: number): Promise<Recipe | null> {
+export async function getRecipeById(id: number): Promise<Recipe> {
   const recipe = recipes.find((r) => r.id === id);
-  return recipe ?? null;
+  if (!recipe) {
+    throw new RecipeNotFoundError(id);
+  }
+  return recipe;
 
 }
 
 let nextId = 3;
 
 export async function createRecipe(data: Omit<Recipe, "id">): Promise<Recipe> {
+  if (typeof data.title !== "string" || data.title.trim().length === 0) {
+    throw new ValidationError("Ein Rezept braucht einen Titel");
+  }
+
   const newRecipe: Recipe = { id: nextId++, ...data };
   recipes.push(newRecipe);
   return newRecipe;

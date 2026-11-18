@@ -24,10 +24,6 @@ export async function getRecipeHandler(req: Request, res: Response, next: NextFu
   const id = Number(req.params.id);
   try {
     const recipe = await getRecipeById(id);
-    if (!recipe) {
-      res.status(404).json({ error: "Rezept nicht gefunden" });
-      return;
-    }
     res.json(recipe);
   } catch (err) {
     next(err);
