@@ -1,5 +1,5 @@
 // Recipe Service
-import { RecipeNotFoundError, ValidationError } from "./recipes.errors";
+import { RecipeNotFoundError, ValidationError } from "./recipes.errors.ts";
 
 // Datentyp für Rezepte definieren
 export type Recipe = {
