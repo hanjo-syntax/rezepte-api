@@ -26,7 +26,7 @@ CREATE TABLE "recipe_ingredients"(
     "position" INTEGER NOT NULL
 );
 ALTER TABLE "recipe_ingredients" ADD CONSTRAINT "recipe_ingredients_recipe_id_position_unique" UNIQUE("recipe_id", "position");
-ALTER TABLE "recipe_ingredients" ADD CONSTRAINT "recipe_ingredients_recipe_id_foreign" FOREIGN KEY("recipe_id") REFERENCES "recipes"("id");
+ALTER TABLE "recipe_ingredients" ADD CONSTRAINT "recipe_ingredients_recipe_id_foreign" FOREIGN KEY("recipe_id") REFERENCES "recipes"("id") ON DELETE CASCADE;
 ALTER TABLE "recipe_ingredients" ADD CONSTRAINT "recipe_ingredients_ingredient_id_foreign" FOREIGN KEY("ingredient_id") REFERENCES "ingredients"("id");
 
 INSERT INTO ingredients (id, name) VALUES
