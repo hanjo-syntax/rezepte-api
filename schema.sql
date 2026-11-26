@@ -8,8 +8,7 @@ CREATE TABLE "recipes"(
     "difficulty" VARCHAR(255) NOT NULL
 );
 
-ALTER TABLE
-    "recipes" ADD PRIMARY KEY("id");
+ALTER TABLE "recipes" ADD PRIMARY KEY("id");
 
 CREATE TABLE "ingredients"(
     "id" SERIAL NOT NULL,
