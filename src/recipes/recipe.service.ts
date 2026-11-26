@@ -1,4 +1,5 @@
 import {
+  addIngredientToRecipe as addIngredientToRecipeInDatabase,
   createRecipe as createRecipeInDatabase,
   deleteRecipe as deleteRecipeInDatabase,
   getAllRecipes as getAllRecipesFromDatabase,
@@ -7,6 +8,7 @@ import {
 } from "./recipe.repo.ts";
 import type {
   CreateRecipeInput,
+  AddIngredientToRecipeInput,
   RecipeDetails,
   RecipeFilters,
   RecipeIngredient,
@@ -53,6 +55,25 @@ export async function updateRecipe(id: number, data: UpdateRecipeInput): Promise
   }
 
   return updateRecipeInDatabase(id, data);
+}
+
+export async function addIngredientToRecipe(
+  recipeId: number,
+  data: AddIngredientToRecipeInput,
+): Promise<void> {
+  if (!Number.isInteger(data.ingredientId) || data.ingredientId < 1) {
+    throw new ValidationError("Ungültige Zutaten-ID");
+  }
+
+  if (typeof data.quantity !== "number" || !Number.isFinite(data.quantity) || data.quantity <= 0) {
+    throw new ValidationError("Die Menge muss größer als 0 sein");
+  }
+
+  if (data.unit !== undefined && data.unit !== null && typeof data.unit !== "string") {
+    throw new ValidationError("Die Einheit muss Text sein");
+  }
+
+  await addIngredientToRecipeInDatabase(recipeId, data);
 }
 
 function validateTitle(title: string): void {

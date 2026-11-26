@@ -1,6 +1,13 @@
 // Recipe Controller
 import { Request, Response, NextFunction } from "express";
-import { getAllRecipes, getRecipeById, createRecipe, deleteRecipe, updateRecipe } from "./recipe.service.ts";
+import {
+  addIngredientToRecipe,
+  createRecipe,
+  deleteRecipe,
+  getAllRecipes,
+  getRecipeById,
+  updateRecipe,
+} from "./recipe.service.ts";
 
 export async function getRecipesHandler(req: Request, res: Response, next: NextFunction) {
   try {
@@ -62,6 +69,25 @@ export async function updateRecipeHandler(req: Request, res: Response, next: Nex
       return;
     }
     res.json(updatedRecipe);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function addIngredientToRecipeHandler(req: Request, res: Response, next: NextFunction) {
+  const recipeId = Number(req.params.id);
+  if (!Number.isInteger(recipeId) || recipeId < 1) {
+    res.status(400).json({ error: "Ungültige Rezept-ID" });
+    return;
+  }
+
+  try {
+    await addIngredientToRecipe(recipeId, {
+      ingredientId: req.body.ingredient_id,
+      quantity: req.body.quantity,
+      unit: req.body.unit,
+    });
+    res.status(204).send();
   } catch (err) {
     next(err);
   }

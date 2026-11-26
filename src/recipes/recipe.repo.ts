@@ -1,4 +1,5 @@
 import { getPostgresPool } from "../pool.postgres.ts";
+import { RecipeNotFoundError, ValidationError } from "./recipes.errors.ts";
 
 export type RecipeRow = {
   id: number;
@@ -28,6 +29,12 @@ export type RecipeFilters = {
 
 export type CreateRecipeInput = Omit<RecipeRow, "id">;
 export type UpdateRecipeInput = Partial<CreateRecipeInput>;
+
+export type AddIngredientToRecipeInput = {
+  ingredientId: number;
+  quantity: number;
+  unit?: string | null;
+};
 
 const pool = getPostgresPool();
 
@@ -146,4 +153,57 @@ export async function updateRecipe(id: number, data: UpdateRecipeInput): Promise
   );
 
   return result.rows[0] ?? null;
+}
+
+export async function addIngredientToRecipe(
+  recipeId: number,
+  data: AddIngredientToRecipeInput,
+): Promise<void> {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const recipeResult = await client.query(
+      "SELECT id FROM recipes WHERE id = $1 FOR UPDATE",
+      [recipeId],
+    );
+    if (recipeResult.rowCount !== 1) {
+      throw new RecipeNotFoundError(recipeId);
+    }
+
+    const ingredientResult = await client.query(
+      "SELECT id FROM ingredients WHERE id = $1",
+      [data.ingredientId],
+    );
+    if (ingredientResult.rowCount !== 1) {
+      throw new ValidationError("Die Zutat existiert nicht");
+    }
+
+    const positionResult = await client.query<{ next_position: number }>(
+      `SELECT COALESCE(MAX(position), 0) + 1 AS next_position
+       FROM recipe_ingredients
+       WHERE recipe_id = $1`,
+      [recipeId],
+    );
+
+    await client.query(
+      `INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity, unit, position)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [
+        recipeId,
+        data.ingredientId,
+        data.quantity,
+        data.unit ?? null,
+        positionResult.rows[0].next_position,
+      ],
+    );
+
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 }
