@@ -27,6 +27,7 @@ export type RecipeFilters = {
 };
 
 export type CreateRecipeInput = Omit<RecipeRow, "id">;
+export type UpdateRecipeInput = Partial<CreateRecipeInput>;
 
 const pool = getPostgresPool();
 
@@ -107,4 +108,42 @@ export async function createRecipe(data: CreateRecipeInput): Promise<RecipeRow> 
 export async function deleteRecipe(id: number): Promise<boolean> {
   const result = await pool.query("DELETE FROM recipes WHERE id = $1", [id]);
   return result.rowCount === 1;
+}
+
+export async function updateRecipe(id: number, data: UpdateRecipeInput): Promise<RecipeRow | null> {
+  const updates: string[] = [];
+  const values: Array<string | number | null> = [];
+
+  const addUpdate = (column: keyof CreateRecipeInput, value: string | number | null) => {
+    values.push(value);
+    updates.push(`${column} = $${values.length}`);
+  };
+
+  if (data.title !== undefined) addUpdate("title", data.title);
+  if (data.description !== undefined) addUpdate("description", data.description);
+  if (data.category !== undefined) addUpdate("category", data.category);
+  if (data.time_in_minutes !== undefined) addUpdate("time_in_minutes", data.time_in_minutes);
+  if (data.portions !== undefined) addUpdate("portions", data.portions);
+  if (data.difficulty !== undefined) addUpdate("difficulty", data.difficulty);
+
+  if (updates.length === 0) {
+    const result = await pool.query<RecipeRow>(
+      `SELECT id, title, description, category, time_in_minutes, portions, difficulty
+       FROM recipes
+       WHERE id = $1`,
+      [id],
+    );
+    return result.rows[0] ?? null;
+  }
+
+  values.push(id);
+  const result = await pool.query<RecipeRow>(
+    `UPDATE recipes
+     SET ${updates.join(", ")}
+     WHERE id = $${values.length}
+     RETURNING id, title, description, category, time_in_minutes, portions, difficulty`,
+    values,
+  );
+
+  return result.rows[0] ?? null;
 }
