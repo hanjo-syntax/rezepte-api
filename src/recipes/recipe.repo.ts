@@ -26,6 +26,8 @@ export type RecipeFilters = {
   maxTime?: number;
 };
 
+export type CreateRecipeInput = Omit<RecipeRow, "id">;
+
 const pool = getPostgresPool();
 
 export async function getAllRecipes(filters: RecipeFilters = {}): Promise<RecipeRow[]> {
@@ -82,4 +84,27 @@ export async function getRecipeById(id: number): Promise<RecipeDetails | null> {
   );
 
   return { ...recipe, ingredients: ingredientsResult.rows };
+}
+
+export async function createRecipe(data: CreateRecipeInput): Promise<RecipeRow> {
+  const result = await pool.query<RecipeRow>(
+    `INSERT INTO recipes (title, description, category, time_in_minutes, portions, difficulty)
+     VALUES ($1, $2, $3, $4, $5, $6)
+     RETURNING id, title, description, category, time_in_minutes, portions, difficulty`,
+    [
+      data.title,
+      data.description,
+      data.category,
+      data.time_in_minutes,
+      data.portions,
+      data.difficulty,
+    ],
+  );
+
+  return result.rows[0];
+}
+
+export async function deleteRecipe(id: number): Promise<boolean> {
+  const result = await pool.query("DELETE FROM recipes WHERE id = $1", [id]);
+  return result.rowCount === 1;
 }
